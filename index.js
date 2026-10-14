@@ -1,10 +1,10 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
-const { GoogleGenAI } = require('@google/genai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // আপনার জেমিনি এপিআই কি বসান
 const GEMINI_API_KEY = "AQ.Ab8RN6IIPI_IQMjUba0EUf5tgIKhQM6AjHikSoqhUj9riH4wFw"; 
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // মেটা প্রম্পট: জেমিনিকে এজেন্সির প্রতিনিধি হিসেবে কাজ করার নির্দেশ
 const SYSTEM_PROMPT = `
@@ -36,7 +36,7 @@ const client = new Client({
 
 client.on('qr', (qr) => {
     console.log('\n====================================================');
-    console.log('Render/Server Logs-এ আসা নিচের QR কোডটি স্ক্যান করুন:');
+    console.log('Render Logs-এ আসা নিচের QR কোডটি স্ক্যান করুন:');
     console.log('====================================================\n');
     qrcode.generate(qr, { small: true });
 });
@@ -46,18 +46,15 @@ client.on('ready', () => {
 });
 
 client.on('message', async (msg) => {
-    // গ্রুপ মেসেজ বাদ দিয়ে শুধু সরাসরি চ্যাট রিসিভ করবে
+    // শুধু সরাসরি চ্যাট রিসিভ করবে (গ্রুপ চ্যাট বাদ দেবে)
     if (!msg.from.includes('@g.us')) {
         try {
-            // জেমিনি মডেল থেকে রেসপন্স নেওয়া
-            const response = await ai.models.generateContent({
-                model: 'gemini-3.8-flash',
-                contents: [
-                    { role: 'user', parts: [{ text: `${SYSTEM_PROMPT}\n\nইউজার বলেছে: ${msg.body}` }] }
-                ]
-            });
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const prompt = `${SYSTEM_PROMPT}\n\nইউজার বলেছে: ${msg.body}`;
 
-            const replyText = response.text;
+            const result = await model.generateContent(prompt);
+            const replyText = result.response.text();
+
             await msg.reply(replyText);
             console.log(`[AI REPLIED to ${msg.from}]: ${replyText}`);
 
