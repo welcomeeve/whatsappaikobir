@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-# পাপেটিয়ার এবং ক্রোম ব্রাউজারের জন্য প্রয়োজনীয় সব লাইব্রেরি ইন্সটল করা
+# পাপেটিয়ার এবং ক্রোম ব্রাউজারের জন্য প্রয়োজনীয় সকল ডেবিয়ান লিনাক্স লাইব্রেরি
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libnss3 \
@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     xdg-utils \
     libgbm1 \
+    libxkbcommon0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
