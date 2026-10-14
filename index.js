@@ -1,21 +1,12 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const qrcode = require('qrcode-terminal');
 
-// আপনার জেমিনি এপিআই কি বসান
+// জেমিনি এআই কনফিগারেশন (আপনার এপিআই কি এখানে দিন)
 const GEMINI_API_KEY = "AQ.Ab8RN6IIPI_IQMjUba0EUf5tgIKhQM6AjHikSoqhUj9riH4wFw"; 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-// মেটা প্রম্পট: জেমিনিকে এজেন্সির প্রতিনিধি হিসেবে কাজ করার নির্দেশ
-const SYSTEM_PROMPT = `
-আপনি একটি অ্যাক্টিং এবং মডেলিং এজেন্সির প্রফেশনাল কাস্টিং টিম প্রতিনিধি।
-আপনার কাজ হলো নতুন বা আগ্রহী অভিনেতাদের সাথে খুব নম্র ও সুন্দরভাবে কথা বলা।
-
-আপনার প্রধান নিয়মসমূহ:
-১. এজেন্সির নিয়ম বুঝিয়ে বলুন: আমরা নতুনদের শর্ট ফিল্ম, নাটক ও বিজ্ঞাপনে কাজের সুযোগ দেই। সিলেকশন সম্পূর্ণ ফ্রী।
-২. আপনার মূল লক্ষ্য: কথা বলার ফাঁকে তাদের কাছ থেকে চ্যাটেই ১-২টি সাম্প্রতিক ছবি এবং বায়োডাটা (নাম, বয়স, উচ্চতা, জেলা) চাওয়া।
-৩. উত্তর সবসময় সংক্ষিপ্ত, বন্ধুত্বপূর্ণ এবং সহজ বাংলায় ৩-৪ লাইনের মধ্যে দিন।
-`;
+const SYSTEM_PROMPT = "আপনি একটি ট্যালেন্ট এজেন্সির হোয়াটসঅ্যাপ এআই অ্যাসিস্ট্যান্ট। অ্যাক্টর অনবোর্ডিং এবং তথ্য সংগ্রহের কাজ করবেন।";
 
 const client = new Client({
     authStrategy: new LocalAuth(),
@@ -34,29 +25,12 @@ const client = new Client({
     }
 });
 
-const client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
-        ]
-    }
-});
-
-// কিউআর ইভেন্টের পরিবর্তে পেয়ারিং কোড ব্যবহারের লজিক
+// পেয়ারিং কোড বা কিউআর কোড জেনারেট করার লজিক
 client.on('qr', async (qr) => {
     // আপনার হোয়াটসঅ্যাপ নম্বরটি কান্ট্রি কোডসহ এখানে বসিয়ে দিন (যেমন: 8801XXXXXXXXX)
     const phoneNumber = "8801XXXXXXXXX"; 
 
-    if (phoneNumber.includes("880")) {
+    if (phoneNumber && !phoneNumber.includes("XXXXXXXXX")) {
         try {
             console.log('\n[INFO] পেয়ারিং কোড রিকোয়েস্ট করা হচ্ছে...\n');
             const pairingCode = await client.requestPairingCode(phoneNumber);
@@ -65,11 +39,11 @@ client.on('qr', async (qr) => {
             console.log('====================================================\n');
         } catch (error) {
             console.error('Pairing Code Error:', error);
+            qrcode.generate(qr, { small: true });
         }
     } else {
-        // যদি নম্বর না দেওয়া থাকে তবে আগের মতো টার্মিনালে কিউআর কোড দেখাবে
         console.log('\n====================================================');
-        console.log('দয়া করে কোডের ভেতরে আপনার সঠিক ফোন নম্বরটি দিন!');
+        console.log('নিচের QR কোডটি স্ক্যান করুন:');
         console.log('====================================================\n');
         qrcode.generate(qr, { small: true });
     }
