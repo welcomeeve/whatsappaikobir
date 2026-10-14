@@ -34,15 +34,49 @@ const client = new Client({
     }
 });
 
-client.on('qr', (qr) => {
-    console.log('\n====================================================');
-    console.log('Render Logs-এ আসা নিচের QR কোডটি স্ক্যান করুন:');
-    console.log('====================================================\n');
-    qrcode.generate(qr, { small: true });
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ]
+    }
+});
+
+// কিউআর ইভেন্টের পরিবর্তে পেয়ারিং কোড ব্যবহারের লজিক
+client.on('qr', async (qr) => {
+    // আপনার হোয়াটসঅ্যাপ নম্বরটি কান্ট্রি কোডসহ এখানে বসিয়ে দিন (যেমন: 8801XXXXXXXXX)
+    const phoneNumber = "8801XXXXXXXXX"; 
+
+    if (phoneNumber.includes("880")) {
+        try {
+            console.log('\n[INFO] পেয়ারিং কোড রিকোয়েস্ট করা হচ্ছে...\n');
+            const pairingCode = await client.requestPairingCode(phoneNumber);
+            console.log('\n====================================================');
+            console.log(`আপনার হোয়াটসঅ্যাপ পেয়ারিং কোড: ${pairingCode}`);
+            console.log('====================================================\n');
+        } catch (error) {
+            console.error('Pairing Code Error:', error);
+        }
+    } else {
+        // যদি নম্বর না দেওয়া থাকে তবে আগের মতো টার্মিনালে কিউআর কোড দেখাবে
+        console.log('\n====================================================');
+        console.log('দয়া করে কোডের ভেতরে আপনার সঠিক ফোন নম্বরটি দিন!');
+        console.log('====================================================\n');
+        qrcode.generate(qr, { small: true });
+    }
 });
 
 client.on('ready', () => {
-    console.log('\n[SUCCESS] হোয়াটসঅ্যাপ জেমিনি এআই বট সফলভাবে চালু হয়েছে!\n');
+    console.log('\n[SUCCESS] হোয়াটসঅ্যাপ জেমিনি এআই বট সফলভাবে চালু হয়েছে!\n');
 });
 
 client.on('message', async (msg) => {
@@ -60,7 +94,7 @@ client.on('message', async (msg) => {
 
         } catch (error) {
             console.error('Gemini API Error:', error);
-            await msg.reply("ধন্যবাদ মেসেজ করার জন্য! আমাদের কাস্টিং টিম থেকে আপনার সাথে শীঘ্রই যোগাযোগ করা হবে। দয়া করে আপনার নাম, বয়স এবং একটি ছবি এখানে পাঠিয়ে রাখুন।");
+            await msg.reply("ধন্যবাদ মেসেজ করার জন্য! আমাদের কাস্টিং টিম থেকে আপনার সাথে শীঘ্রই যোগাযোগ করা হবে। দয়া করে আপনার নাম, বয়স এবং একটি ছবি এখানে পাঠিয়ে রাখুন।");
         }
     }
 });
