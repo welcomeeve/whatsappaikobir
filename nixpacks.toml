@@ -1,0 +1,24 @@
+[phases.setup]
+nixPkgs = [
+    "glib",
+    "nss",
+    "nspr",
+    "atk",
+    "cups",
+    "dbus",
+    "gio-2.0",
+    "libdrm",
+    "libx11",
+    "libxcomposite",
+    "libxdamage",
+    "libxext",
+    "libxfixes",
+    "libxrandr",
+    "libxrender",
+    "mesa",
+    "pango",
+    "at-spi2-atk",
+    "libcups2",
+    "libxkbcommon",
+    "libatasmart"
+]
