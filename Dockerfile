@@ -1,11 +1,12 @@
 FROM node:18-slim
 
-# পাপেটিয়ার এবং ক্রোম ব্রাউজারের জন্য প্রয়োজনীয় লিনাক্স লাইব্রেরি ইন্সটল করা
+# পাপেটিয়ার এবং ক্রোম ব্রাউজারের জন্য প্রয়োজনীয় সব লাইব্রেরি ইন্সটল করা
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libnss3 \
     libnspr4 \
     libatk1.0-0 \
+    libatk-bridge2.0-0 \
     libcups2 \
     libdbus-1-3 \
     libgdk-pixbuf2.0-0 \
