@@ -2,7 +2,7 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const qrcode = require('qrcode-terminal');
 
-// জেমিনি এআই কনফিগারেশন (আপনার এপিআই কি এখানে দিন)
+// জেমিনি এআই কনফিগারেশন
 const GEMINI_API_KEY = "AQ.Ab8RN6IIPI_IQMjUba0EUf5tgIKhQM6AjHikSoqhUj9riH4wFw"; 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
@@ -25,25 +25,29 @@ const client = new Client({
     }
 });
 
-// পেয়ারিং কোড বা কিউআর কোড জেনারেট করার লজিক
 client.on('qr', async (qr) => {
-    // আপনার হোয়াটসঅ্যাপ নম্বরটি কান্ট্রি কোডসহ এখানে বসিয়ে দিন (যেমন: 8801XXXXXXXXX)
+    // ⚠️ আপনার আসল হোয়াটসঅ্যাপ নম্বরটি এখানে বসিয়ে দিন (যেমন: 8801712345678)
     const phoneNumber = "8801XXXXXXXXX"; 
 
     if (phoneNumber && !phoneNumber.includes("XXXXXXXXX")) {
         try {
             console.log('\n[INFO] পেয়ারিং কোড রিকোয়েস্ট করা হচ্ছে...\n');
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
             const pairingCode = await client.requestPairingCode(phoneNumber);
             console.log('\n====================================================');
-            console.log(`আপনার হোয়াটসঅ্যাপ পেয়ারিং কোড: ${pairingCode}`);
+            console.log(`🔑 আপনার হোয়াটসঅ্যাপ পেয়ারিং কোড: ${pairingCode}`);
             console.log('====================================================\n');
         } catch (error) {
             console.error('Pairing Code Error:', error);
+            console.log('\n====================================================');
+            console.log('Render/Railway Logs-এ আসা নিচের QR কোডটি স্ক্যান করুন:');
+            console.log('====================================================\n');
             qrcode.generate(qr, { small: true });
         }
     } else {
         console.log('\n====================================================');
-        console.log('নিচের QR কোডটি স্ক্যান করুন:');
+        console.log('Render/Railway Logs-এ আসা নিচের QR কোডটি স্ক্যান করুন:');
         console.log('====================================================\n');
         qrcode.generate(qr, { small: true });
     }
