@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     libcups2 \
     libdbus-1-3 \
     libgdk-pixbuf2.0-0 \
-    libnspr4 \
     libpango-1.0-0 \
     libx11-xcb1 \
     libxcomposite1 \
@@ -17,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     libxdamage1 \
     libxi6 \
     libxtst6 \
-    libnssutil3 \
     xdg-utils \
     libgbm1 \
     && rm -rf /var/lib/apt/lists/*
