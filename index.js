@@ -43,7 +43,7 @@ client.on('qr', async (qr) => {
 client.on('message', async (msg) => {
     if (!msg.from.includes('@g.us')) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
             const prompt = `${SYSTEM_PROMPT}\n\nইউজার বলেছে: ${msg.body}`;
             const result = await model.generateContent(prompt);
             await msg.reply(result.response.text());
