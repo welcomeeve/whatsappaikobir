@@ -24,23 +24,20 @@ const client = new Client({
 });
 
 // ব্রাউজার রেডি হওয়া বা কিউআর জেনারেট হওয়ার ইভেন্ট
-client.on('qr', (qr) => {
-    console.log('\n====================================================');
-    console.log('✅ QR কোড জেনারেট হয়েছে! নিচে স্ক্যান করুন:');
-    console.log('====================================================\n');
-    qrcode.generate(qr, { small: true });
-});
-
-client.on('authenticated', () => {
-    console.log('\n[INFO] হোয়াটসঅ্যাপ অথেন্টিকেশন সফল হয়েছে!\n');
-});
-
-client.on('ready', () => {
-    console.log('\n[SUCCESS] হোয়াটসঅ্যাপ জেমিনি এআই বট সফলভাবে চালু হয়েছে!\n');
-});
-
-client.on('auth_failure', (msg) => {
-    console.error('[ERROR] অথেন্টিকেশন ফেইল করেছে:', msg);
+client.on('qr', async (qr) => {
+    const phoneNumber = "8801819267776"; // এখানে আপনার কান্ট্রি কোডসহ নম্বরটি দিন (যেমন: 88017XXXXXXXX)
+    
+    try {
+        console.log('\n[INFO] পেয়ারিং কোড রিকোয়েস্ট করা হচ্ছে...');
+        await new Promise(resolve => setTimeout(resolve, 5000)); // ৫ সেকেন্ড অপেক্ষা
+        
+        const pairingCode = await client.requestPairingCode(phoneNumber);
+        console.log('\n====================================================');
+        console.log(`🔑 আপনার হোয়াটসঅ্যাপ পেয়ারিং কোড: ${pairingCode}`);
+        console.log('====================================================\n');
+    } catch (error) {
+        console.error('Pairing Code Error:', error);
+    }
 });
 
 client.on('message', async (msg) => {
